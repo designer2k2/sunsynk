@@ -54,6 +54,7 @@ class Options:
     driver: str = "pymodbus"
     manufacturer: str = "Sunsynk"
     debug_device: str = ""
+    ss_topic: str = "SUNSYNK/status"
 
     def load(self, value: dict) -> None:
         """Structure and copy result to self."""
