@@ -41,6 +41,7 @@ if TYPE_CHECKING:
     from ha_addon_sunsynk_multi.a_inverter import AInverter
 
 
+opt: SensorOption
 SS_TOPIC = opt.ss_topic
 _LOGGER = logging.getLogger(__name__)
 """An array of the Sunsynk driver instances."""
