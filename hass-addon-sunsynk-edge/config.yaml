@@ -1,12 +1,12 @@
 ---
-name: Sunsynk/Deye Inverter Add-on (edge/dev)
+name: Sunsynk/Deye Inverter Add-on (edge/dev) Mod
 version: "4795d1b"
 image: ghcr.io/designer2k2/hass-addon-sunsynk-multi
 slug: hass-addon-sunsynk-edge
-description: Add-on for a Sunsynk/Deye branded Inverter
+description: Modded Add-on for a Sunsynk/Deye branded Inverter
 startup: services
 boot: auto
-url: "https://github.com/kellerza/sunsynk"
+url: "https://github.com/designer2k2/sunsynk"
 uart: true
 init: false
 arch:
@@ -65,7 +65,7 @@ schema:
   SENSORS_FIRST_INVERTER:
     - str
   MANUFACTURER: str
-  SS_TOPIC: str
+  SS_TOPIC: SUNSYNK/status
   READ_ALLOW_GAP: int(1,50)
   READ_SENSORS_BATCH_SIZE: int(1,100)
   SCHEDULES:
