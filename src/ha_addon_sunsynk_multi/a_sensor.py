@@ -141,7 +141,7 @@ class ASensor:
 
         sensor = self.opt.sensor
 
-        state_topic = f"{SS_TOPIC}/{dev.id[0]}/{sensor.id}"
+        state_topic = f"{OPT.ss_topic}/{dev.id[0]}/{sensor.id}"
         command_topic = f"{state_topic}_set"
 
         discovery_extra: dict[str, str | int] = {
@@ -260,7 +260,7 @@ class TimeoutState(ASensor):
         self.entity = SensorEntity(
             name="RS485 timeouts",
             unique_id=f"{dev.id}_timeouts",
-            state_topic=f"{SS_TOPIC}/{dev.id[0]}/timeouts",
+            state_topic=f"{OPT.ss_topic}/{dev.id[0]}/timeouts",
             entity_category="config",
             device=dev,
         )
