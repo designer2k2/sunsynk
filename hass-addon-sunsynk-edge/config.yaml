@@ -51,6 +51,7 @@ options:
   MQTT_PORT: 1883
   MQTT_USERNAME: hass
   MQTT_PASSWORD: ""
+  SS_TOPIC: SUNSYNk/status?
 schema:
   DRIVER: list(pymodbus|umodbus|solarman)
   INVERTERS:
@@ -65,7 +66,6 @@ schema:
   SENSORS_FIRST_INVERTER:
     - str
   MANUFACTURER: str
-  SS_TOPIC: SUNSYNk/status
   READ_ALLOW_GAP: int(1,50)
   READ_SENSORS_BATCH_SIZE: int(1,100)
   SCHEDULES:
