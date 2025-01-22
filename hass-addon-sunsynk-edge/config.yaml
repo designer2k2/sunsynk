@@ -1,7 +1,7 @@
 ---
 name: Sunsynk/Deye Inverter Add-on (edge/dev)
 version: "864472d"
-image: ghcr.io/kellerza/hass-addon-sunsynk-multi
+image: ghcr.io/designer2k2/hass-addon-sunsynk-multi
 slug: hass-addon-sunsynk-edge
 description: Add-on for a Sunsynk/Deye branded Inverter
 startup: services
@@ -65,6 +65,7 @@ schema:
   SENSORS_FIRST_INVERTER:
     - str
   MANUFACTURER: str
+  SS_TOPIC: str
   READ_ALLOW_GAP: int(1,50)
   READ_SENSORS_BATCH_SIZE: int(1,100)
   SCHEDULES:
