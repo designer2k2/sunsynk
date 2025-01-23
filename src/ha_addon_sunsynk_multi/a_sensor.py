@@ -41,12 +41,13 @@ if TYPE_CHECKING:
     from ha_addon_sunsynk_multi.a_inverter import AInverter
 
 
-SS_TOPIC = OPT.ss_topic
+
 _LOGGER = logging.getLogger(__name__)
 """An array of the Sunsynk driver instances."""
 MQTT = MQTTClient()
 """The MQTTClient instance."""
-
+SS_TOPIC = OPT.ss_topic
+_LOGGER.info("OPT.ss_topic %s", SS_TOPIC)
 
 # NotRequired need Python 3.11 - Already standard in HASS
 class MqttEntityOptions(TypedDict):
