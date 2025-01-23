@@ -205,7 +205,7 @@ class AInverter:
             name="RS485 timeout",
             unique_id=f"{dev.id}_{name}",
             unit_of_measurement=" ",
-            state_topic=f"{OPT.ss_topic}/{dev.id[0]}/{name}",
+            state_topic=f"{OPT.ss_topic}/{dev.name}/{name}",
             entity_category="diagnostic",
             device=dev,
             discovery_extra={
@@ -217,8 +217,8 @@ class AInverter:
             name="Callback stats",
             unique_id=f"{dev.id}_{name}",
             unit_of_measurement=" ",
-            state_topic=f"{OPT.ss_topic}/{dev.id[0]}/{name}",
-            json_attributes_topic=f"{OPT.ss_topic}/{dev.id[0]}/{name}_attr",
+            state_topic=f"{OPT.ss_topic}/{dev.name}/{name}",
+            json_attributes_topic=f"{OPT.ss_topic}/{dev.name}/{name}_attr",
             entity_category="diagnostic",
             device=dev,
             discovery_extra={
