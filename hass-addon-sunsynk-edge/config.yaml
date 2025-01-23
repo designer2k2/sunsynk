@@ -51,7 +51,7 @@ options:
   MQTT_PORT: 1883
   MQTT_USERNAME: hass
   MQTT_PASSWORD: ""
-  SS_TOPIC: SUNSYNk/status?
+  SS_TOPIC: SUNSYNk/status
 schema:
   DRIVER: list(pymodbus|umodbus|solarman)
   INVERTERS:
@@ -81,5 +81,6 @@ schema:
   MQTT_PORT: port
   MQTT_USERNAME: str
   MQTT_PASSWORD: password
+  SS_TOPIC: str?
   DEBUG: int(0,5)?
   DEBUG_DEVICE: device(subsystem=tty)?
