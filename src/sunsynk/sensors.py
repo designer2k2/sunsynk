@@ -437,10 +437,8 @@ class BitmaskedSensor(Sensor):
             "base_value": base_value,
             '+': operator.add,
         }
-        
         try:
             result = eval(expression, allowed_globals, allowed_locals)
         except Exception as e:
             raise ValueError(f"Invalid expression: {expression}") from e
         return result
-
