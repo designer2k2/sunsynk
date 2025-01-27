@@ -365,7 +365,7 @@ class ProtocolVersionSensor(Sensor):
 class WarningSensor(Sensor):
     """Decode Inverter Warnings."""
 
-    def update_value(self) -> None:
+    def reg_to_value(self, regs: RegType) -> ValType:
         """Decode Inverter warnings."""
         faults = {
             1: "1",
@@ -404,7 +404,7 @@ class WarningSensor(Sensor):
 
         err = []
         off = 0
-        for b16 in self.reg_value:
+        for b16 in regs:
             for bit in range(16):
                 msk = 1 << bit
                 if msk & b16:
