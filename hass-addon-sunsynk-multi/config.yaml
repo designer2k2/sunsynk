@@ -1,12 +1,12 @@
 ---
-name: Sunsynk/Deye Inverter Add-on (multi)
-version: "0.8.2"
-image: ghcr.io/kellerza/hass-addon-sunsynk-multi
+name: Modded Sunsynk/Deye Inverter Add-on (multi)
+version: "0.8.3"
+image: ghcr.io/designer2k2/hass-addon-sunsynk-multi
 slug: hass-addon-sunsynk-multi
-description: Add-on for a Sunsynk/Deye branded Inverter
+description: Modded Add-on for a Sunsynk/Deye branded Inverter
 startup: services
 boot: auto
-url: "https://github.com/kellerza/sunsynk"
+url: "https://github.com/designer2k2/sunsynk"
 uart: true
 init: false
 arch:
@@ -27,7 +27,7 @@ options:
       HA_PREFIX: SS
       MODBUS_ID: 1
       DONGLE_SERIAL_NUMBER: "0"
-      PORT: "tcp://homeassistant.local:502"
+      PORT: "tcp://homeassistant:502"
   SENSOR_DEFINITIONS: single-phase
   SENSORS:
     - energy_management

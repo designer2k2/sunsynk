@@ -1,4 +1,4 @@
-FROM ghcr.io/kellerza/hass-addon-sunsynk-multi:0.8.2
+FROM ghcr.io/designer2k2/hass-addon-sunsynk-multi:0.8.3
 
 # Install sunsynk from local source
 COPY sunsynk sunsynk
