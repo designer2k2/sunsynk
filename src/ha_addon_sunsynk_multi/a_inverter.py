@@ -203,7 +203,7 @@ class AInverter:
         name = "timeout"
         self.entity_timeout = SensorEntity(
             name="RS485 timeout",
-            unique_id=f"{dev.id}_{name}",
+            unique_id=f"{dev.name}_{name}",
             unit_of_measurement=" ",
             state_topic=f"{OPT.ss_topic}/{dev.name}/{name}",
             entity_category="diagnostic",
@@ -215,7 +215,7 @@ class AInverter:
         name = "cb_stats"
         self.entity_cbstats = SensorEntity(
             name="Callback stats",
-            unique_id=f"{dev.id}_{name}",
+            unique_id=f"{dev.name}_{name}",
             unit_of_measurement=" ",
             state_topic=f"{OPT.ss_topic}/{dev.name}/{name}",
             json_attributes_topic=f"{OPT.ss_topic}/{dev.name}/{name}_attr",

@@ -153,7 +153,7 @@ class ASensor:
         ent: MqttEntityOptions = {
             "name": sensor.name,
             "state_topic": state_topic,
-            "unique_id": f"{dev.id}_{sensor.id}",
+            "unique_id": f"{dev.name}_{sensor.id}",
             "unit_of_measurement": sensor.unit,
             # https://github.com/kellerza/sunsynk/issues/165
             "discovery_extra": discovery_extra,
@@ -260,7 +260,7 @@ class TimeoutState(ASensor):
 
         self.entity = SensorEntity(
             name="RS485 timeouts",
-            unique_id=f"{dev.id}_timeouts",
+            unique_id=f"{dev.name}_timeouts",
             state_topic=f"{OPT.ss_topic}/{dev.name}/timeouts",
             entity_category="config",
             device=dev,
