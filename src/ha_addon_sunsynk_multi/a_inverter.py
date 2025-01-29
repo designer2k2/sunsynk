@@ -164,7 +164,7 @@ class AInverter:
         serial_nr = self.opt.serial_nr
 
         dev = Device(
-            identifiers=[serial_nr],
+            identifiers=[self.opt.ha_prefix],
             # https://github.com/kellerza/sunsynk/issues/165
             # name=f"{OPT.manufacturer} AInverter {serial_nr}",
             name=self.opt.ha_prefix,
