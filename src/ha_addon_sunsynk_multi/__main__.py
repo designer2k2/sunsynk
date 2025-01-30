@@ -4,7 +4,7 @@ import asyncio
 import logging
 
 from ha_addon_sunsynk_multi.a_inverter import STATE
-from ha_addon_sunsynk_multi.a_sensor import MQTT, SS_TOPIC
+from ha_addon_sunsynk_multi.a_sensor import MQTT
 from ha_addon_sunsynk_multi.driver import callback_discovery_info, init_driver
 from ha_addon_sunsynk_multi.errors import print_errors
 from ha_addon_sunsynk_multi.options import OPT, init_options
