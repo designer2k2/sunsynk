@@ -91,7 +91,19 @@ def as_num(val: ValType) -> float | int:
 
 def slug(name: str) -> str:
     """Create a slug."""
-    return name.lower().replace(" ", "_").replace("-", "_")
+    replace_map = {
+        " ": "_",
+        "-": "_",
+        "(": "",
+        ")": "",
+        ">": "",
+        "<": "",
+        "/": "_",
+    }
+    string = name.lower()
+    for (target, replacement) in replace_map.items():
+        string = string.replace(target, replacement)
+    return string
 
 
 def hex_str(regs: RegType, address: RegType | None = None) -> str:
