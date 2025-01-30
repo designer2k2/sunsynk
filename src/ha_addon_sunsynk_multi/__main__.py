@@ -27,7 +27,7 @@ async def main_loop() -> None:
     asyncio.get_event_loop().set_debug(OPT.debug > 0)
 
     # MQTT availability will always use first inverter's serial
-    MQTT.availability_topic = f"{SS_TOPIC}/{OPT.inverters[0].serial_nr}/availability"
+    MQTT.availability_topic = f"{OPT.ss_topic}/{OPT.inverters[0].ha_prefix}/availability"
 
     CALLBACKS.append(
         AsyncCallback(name="discovery_info", every=5, callback=callback_discovery_info)
