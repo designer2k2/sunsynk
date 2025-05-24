@@ -1,7 +1,5 @@
 """Addon options."""
 
-from __future__ import annotations
-
 import logging
 import os
 import typing as t
@@ -30,6 +28,25 @@ class InverterOptions:
     ha_prefix: str = ""
     serial_nr: str = ""
     dongle_serial_number: int = 0
+
+    def check(self) -> None:
+        """Do some checks."""
+        if self.dongle_serial_number:
+            if self.port:
+                _LOGGER.warning(
+                    "%s: No port expected when you specify a serial number."
+                )
+            return
+        if self.port == "":
+            _LOGGER.warning(
+                "%s: Using port from debug_device: %s", self.serial_nr, OPT.debug_device
+            )
+            self.port = OPT.debug_device
+        ddev = self.port == ""
+        if ddev:
+            _LOGGER.warning("Empty port, will use the debug device")
+        if ddev or self.port.lower().startswith(("serial:", "/dev")):
+            _LOGGER.warning("Use mbusd instead of connecting directly to a serial port")
 
 
 @attrs.define(slots=True)
@@ -64,7 +81,7 @@ class Options:
         except Exception as exc:
             msg = "Error loading config: " + "\n".join(transform_error(exc))
             _LOGGER.error(msg)
-            raise ValueError(msg)  # pylint:disable=raise-missing-from
+            raise ValueError(msg) from None
         for key in value:
             setattr(self, key.lower(), getattr(val, key.lower()))
 
@@ -77,9 +94,9 @@ class Options:
             if not val:
                 continue
             if t.get_origin(att.type) is list:
-                res[att.name.upper()] = loads(val) if "[" in val else val.split(",")
+                res[att.name.lower()] = loads(val) if "[" in val else val.split(",")
                 continue
-            res[att.name.upper()] = val
+            res[att.name.lower()] = val
         if res:
             _LOGGER.info("Loading config from environment variables: %s", res)
             self.load(res)
@@ -123,11 +140,14 @@ def init_options() -> None:
             force=True,
         )
 
+    for inv in OPT.inverters:
+        inv.check()
+
 
 CONVERTER = Converter(forbid_extra_keys=True)
 
 
-def structure_ensure_lowercase_keys(cls: t.Type) -> t.Callable[[t.Any, t.Any], t.Any]:
+def structure_ensure_lowercase_keys(cls: type) -> t.Callable[[t.Any, t.Any], t.Any]:
     """Convert any uppercase keys to lowercase."""
     struct = make_dict_structure_fn(cls, CONVERTER)  # type: ignore
 

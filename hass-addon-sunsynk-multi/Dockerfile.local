@@ -1,7 +1,0 @@
-FROM ghcr.io/designer2k2/hass-addon-sunsynk-multi:0.8.3
-
-# Install sunsynk from local source
-COPY sunsynk sunsynk
-RUN pip3 install -e ./sunsynk[pymodbus,umodbus,solarman] --no-cache-dir --disable-pip-version-check
-
-COPY rootfs /

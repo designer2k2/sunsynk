@@ -70,11 +70,19 @@ Other tested adaptors
 
    ![settings](../images/eth-hf5142-settings.webp =400x400)
 
+4. Waveshare RS485 TO (POE) ETH  (1x RS485 to 1x E-Port)
+
+   ![gateway](../images/eth-ws485poe.jpg)
+
+   This gateway was tested with the Deye 3 Phase Hybrid Inverter SUN-25K-SG01HP3-EU-AM2. The following serial settings were used:
+
+   ![settings](../images/eth-ws485poe-settings.png =400x400)
+
 ## Sunsynk Inverters
 
 ### Sunsynk 3.6kW Inverter
 
-<img src="https://github.com/kellerza/sunsynk/raw/main/images/inv-ss-3-6kw.png" width="80%">
+![SS](../images/inv-ss-3-6kw.png =80%x)
 
 ### Sunsynk Ecco 3.6kW Hybrid Inverter
 
@@ -82,9 +90,9 @@ Model number: `SUN-3.6K-SG04LP1-EU`
 
 This likely applies to similar models in the Ecco range: `SUN-3K-SG04LP1-24-EU / SUN-3K-SG04LP1-EU / SUN-5K-SG04LP1-EU / SUN-6K-SG04LP1-EU`
 
-<img src="https://github.com/kellerza/sunsynk/raw/main/images/inv-ss-ecco-3-6kw.png" width="80%">
+![SS](../images/inv-ss-ecco-3-6kw.png =80%x)
 
-[Closer view of the RS485/CAN port](https://github.com/kellerza/sunsynk/raw/main/images/inv-ss-ecco-3-6kw-485can.png)
+[Closer view of the RS485/CAN port](../images/inv-ss-ecco-3-6kw-485can.png)
 
 ### Sunsynk 5.5kW Inverter
 
@@ -94,7 +102,7 @@ NOTE: RJ-45 port marked **RS485** (bottom right) does not work.
 
 ### Sunsynk 8.8kW Inverter
 
-<img src="https://github.com/kellerza/sunsynk/raw/main/images/inv-ss-8kw.png" width="80%">
+![SS](../images/inv-ss-8kw.png =80%x)
 
 Tested with: USB-to-485 adaptor sourced from Micro Robotics, [here](https://www.robotics.org.za/index.php?route=product/product&product_id=5947)
 
@@ -102,9 +110,15 @@ Tested with: USB-to-485 adaptor sourced from Micro Robotics, [here](https://www.
 
 ### Deye 8kW Inverter
 
-<img src="https://github.com/kellerza/sunsynk/raw/main/images/inv-deye-8kw.png" width="80%">
+![Deye](../images/inv-deye-8kw.png =80%x)
 
 RS485 is the blue line - top left, as with the Sunsynk inverters. Yellow is the CAN-comms with the Pylontech batteries
+
+### Deye 25kW HV Inverter
+
+![Deye](../images/inv-deye-25kw-hv.jpg =80%x)
+
+RS485 is the grey line - bottom right. BMS1 is the CAN-comms with the Dyness batteries
 
 ## Turbo-Energy Inverter
 

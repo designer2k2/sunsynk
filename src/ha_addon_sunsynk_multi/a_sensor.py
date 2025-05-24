@@ -119,7 +119,7 @@ class ASensor:
         return units in {"W", "V", "A", "Hz", "°C", "°F", "%", "Ah", "VA"}
 
     def visible_on(self, ist: AInverter) -> bool:
-        """Should entity be visible on this inverter."""
+        """Is entity visible on this inverter."""
         if not self.opt.visible:
             return False
         if self.opt.first and ist.index > 0:
@@ -180,7 +180,7 @@ class ASensor:
                 self.entity = SensorEntity(device=dev, **ent)
             return self.entity
 
-        async def on_change(val: float | int | str | bool) -> None:
+        async def on_change(val: float | str | bool) -> None:
             """On change callback."""
             _LOGGER.info("Queue update %s=%s", sensor.id, val)
             ist.write_queue.update({sensor: val})
@@ -202,7 +202,7 @@ class ASensor:
             )
             return self.entity
 
-        if isinstance(sensor, (SwitchRWSensor, SwitchRWSensor0)):
+        if isinstance(sensor, (SwitchRWSensor | SwitchRWSensor0)):
             self.entity = SwitchEntity(
                 device=dev,
                 **ent,

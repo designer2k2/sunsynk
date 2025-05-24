@@ -3,7 +3,7 @@
 import asyncio
 import logging
 import traceback
-from typing import Callable, Iterable
+from collections.abc import Callable, Iterable
 
 import attrs
 from mqtt_entity import Device, Entity, SensorEntity  # type: ignore[import]
@@ -61,7 +61,7 @@ class AInverter:
             self.read_errors += 1
             if msg:
                 arg0, *argn = err.args if err.args else ("",)
-                err.args = tuple([f"{arg0} {msg}".strip()] + argn)
+                err.args = tuple([f"{arg0} {msg}".strip(), *argn])
 
             if OPT.debug > 1:
                 traceback.print_exc()
@@ -181,6 +181,9 @@ class AInverter:
                 ents.append(s.create_entity(dev, ist=self))
             except Exception as err:  # pylint:disable=broad-except
                 _LOGGER.error("Could not create MQTT entity for %s: %s", s, err)
+
+            if hasattr(s.opt.sensor, "rated_power"):
+                s.opt.sensor.rated_power = int(self.rated_power)
         ents.extend(self.create_stats_entities(dev))
         await MQTT.connect(OPT)
         await MQTT.publish_discovery_info(entities=ents)

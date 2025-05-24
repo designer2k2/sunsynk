@@ -3,13 +3,14 @@
 from __future__ import annotations
 
 import logging
+from statistics import mean
 
 import attrs
 
 from sunsynk.helpers import (
+    NumType,
     RegType,
     ValType,
-    NumType,
     ensure_tuple,
     int_round,
     slug,
@@ -58,6 +59,39 @@ class Sensor:
         if not isinstance(other, Sensor):
             raise TypeError(str(type(other)))
         return self.id == other.id
+
+
+@attrs.define(slots=True, eq=False)
+class Sensor16(Sensor):
+    """Sensor with a 16-bit/32-bit register registers."""
+
+    history1: list[int] = attrs.field(factory=list)
+    """History of reg[1]. If last 10 are all > 0, unpack as 32-bit, else only 16-bit."""
+    history0: list[int] = attrs.field(factory=list)
+
+    def reg_to_value(self, regs: RegType) -> ValType:
+        """Return the value from the registers."""
+        regs = self.masked(regs)
+        self.history1.append(regs[1])
+        self.history0.append(regs[0])
+        if len(self.history1) > 10:
+            self.history1.pop(0)
+            self.history0.pop(0)
+        # _LOGGER.debug("%s %s", hex_str(regs), mean(self.history0))
+        if (
+            any(r == 0 for r in self.history1)  # reg[1] between negative and positive
+            or (  # a big drop in reg[0] could also be close to a neg to pos transition
+                regs[1] == 0xFFFF and mean(self.history0) - regs[0] > 10000
+            )
+        ):
+            regs = (regs[0],)
+        val: NumType = unpack_value(regs, signed=self.factor < 0)
+        val = int_round(float(val) * abs(self.factor))
+        return val
+
+    def __attrs_post_init__(self) -> None:
+        """Ensure correct parameters."""
+        assert len(self.address) == 2
 
 
 @attrs.define(slots=True, eq=False)
@@ -117,7 +151,7 @@ class SensorDefinitions:
         if isinstance(item, Sensor):
             self.all[item.id] = item
             return self
-        if isinstance(item, (tuple, list)):
+        if isinstance(item, (tuple | list)):
             for itm in item:
                 self.all[itm.id] = itm
         return self
@@ -137,7 +171,12 @@ class MathSensor(Sensor):
 
     def reg_to_value(self, regs: RegType) -> ValType:
         """Calculate the math value."""
-        val = int_round(sum(unpack_value((i,), signed=True) * s for i, s in zip(regs, self.factors)))
+        val = int_round(
+            sum(
+                unpack_value((i,), signed=True) * s
+                for i, s in zip(regs, self.factors, strict=False)
+            )
+        )
         if self.absolute and val < 0:
             val = -val
         if self.no_negative and val < 0:
@@ -204,7 +243,7 @@ class SerialSensor(Sensor):
 
 @attrs.define(slots=True, eq=False)
 class EnumSensor(TextSensor):
-    """Sensor with a set of enum values. Like a read-only SelectRWSensor"""
+    """Sensor with a set of enum values. Like a read-only SelectRWSensor."""
 
     options: dict[int, str] = attrs.field(factory=dict)
     unknown: str | None = None

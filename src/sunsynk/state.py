@@ -2,13 +2,14 @@
 
 import logging
 from collections import defaultdict
-from typing import Callable, Generator, Iterable, Iterator, Sequence, cast
+from collections.abc import Callable, Generator, Iterable, Iterator, Sequence
+from typing import cast
 
 import attr
 
+from sunsynk.helpers import NumType
 from sunsynk.rwsensors import RWSensor
 from sunsynk.sensors import BinarySensor, Sensor, ValType
-from sunsynk.helpers import NumType
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -76,8 +77,8 @@ class InverterState:
                 changed[sen] = (newv, oldv)
 
             numeric = (
-                isinstance(newv, (int, float))
-                and not isinstance(sen, (RWSensor, BinarySensor))
+                isinstance(newv, (int | float))
+                and not isinstance(sen, (RWSensor | BinarySensor))
                 and sen not in self.historynn
             )
             if numeric:

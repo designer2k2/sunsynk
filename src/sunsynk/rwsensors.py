@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
-from typing import Callable, Generator
+from collections.abc import Callable, Generator
 
 import attrs
 from mqtt_entity.utils import BOOL_OFF, BOOL_ON
@@ -37,7 +37,7 @@ class RWSensor(Sensor):
                 regs,
                 msg,
             )
-            return (regs[0] & self.bitmask,) + tuple(regs[1:])
+            return (regs[0] & self.bitmask, *regs[1:])
         return regs
 
     def value_to_reg(self, value: ValType, resolve: ResolveType) -> RegType:
@@ -83,7 +83,9 @@ class NumberRWSensor(RWSensor):
         minv = resolve_num(resolve, self.min, 0)
         maxv = resolve_num(resolve, self.max, 100)
         val = int(max(minv, min(maxv, fval)) / abs(self.factor))
-        return self.reg(*pack_value(val, bits=len(self.address)*16, signed=self.factor < 0))
+        return self.reg(
+            *pack_value(val, bits=len(self.address) * 16, signed=self.factor < 0)
+        )
 
 
 @attrs.define(slots=True, eq=False)
@@ -276,7 +278,7 @@ def resolve_num(
     default: NumType = 0,
 ) -> NumType:
     """Resolve a number helper."""
-    if isinstance(val, (int, float)):
+    if isinstance(val, (int | float)):
         return val
     if isinstance(val, Sensor):
         res = resolve(val, default) if resolve else 0
