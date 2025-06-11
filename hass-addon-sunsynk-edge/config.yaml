@@ -1,6 +1,6 @@
 ---
 name: Sunsynk Inverter Add-on (dev) Mod
-version: "6794d2f"
+version: "8fec561"
 image: ghcr.io/designer2k2/hass-addon-sunsynk-multi
 slug: hass-addon-sunsynk-edge
 description: Modded Add-on for a Sunsynk/Deye branded Inverter
