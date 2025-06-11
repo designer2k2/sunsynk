@@ -1,3 +1,3 @@
 # Changelog
 
-<https://github.com/kellerza/sunsynk/releases>
+<https://github.com/designer2k2/sunsynk/releases>
