@@ -61,6 +61,7 @@ class PySunsynk(Sunsynk):
             # method="rtu",
             stopbits=1,
             bytesize=8,
+            broadcast_enable=True,  # Accept responses with any device ID (some Deye firmware always responds with ID 0)
         )
 
     async def connect(self) -> None:
