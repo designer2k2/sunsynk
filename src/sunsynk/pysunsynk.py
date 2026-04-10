@@ -58,14 +58,15 @@ class PySunsynk(Sunsynk):
 
         server_id = self.server_id
 
-        def _patch_slave_id(recv: bool, data: bytes) -> bytes:
+        def _patch_slave_id(sending: bool, data: bytes) -> bytes:
             """Patch slave ID 0 in responses to match server_id.
 
             Some Deye/Virtus inverter firmware always responds with slave ID 0
             regardless of the configured Modbus SN, causing pymodbus to reject
             the response. This patches the first byte of incoming frames.
+            Note: sending=False means we are receiving data from the inverter.
             """
-            if recv and len(data) > 0 and data[0] == 0:
+            if not sending and len(data) > 0 and data[0] == 0:
                 data = bytes([server_id]) + data[1:]
             return data
 
