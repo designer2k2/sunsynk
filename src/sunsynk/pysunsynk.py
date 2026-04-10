@@ -55,13 +55,27 @@ class PySunsynk(Sunsynk):
             return client
 
         _LOGGER.info("PyModbus %s Serial: %s", version, self.port)
+
+        server_id = self.server_id
+
+        def _patch_slave_id(recv: bool, data: bytes) -> bytes:
+            """Patch slave ID 0 in responses to match server_id.
+
+            Some Deye/Virtus inverter firmware always responds with slave ID 0
+            regardless of the configured Modbus SN, causing pymodbus to reject
+            the response. This patches the first byte of incoming frames.
+            """
+            if recv and len(data) > 0 and data[0] == 0:
+                data = bytes([server_id]) + data[1:]
+            return data
+
         return AsyncModbusSerialClient(
             port=self.port,
             baudrate=self.baudrate,
             # method="rtu",
             stopbits=1,
             bytesize=8,
-            broadcast_enable=True,  # Accept responses with any device ID (some Deye firmware always responds with ID 0)
+            trace_packet=_patch_slave_id,
         )
 
     async def connect(self) -> None:
