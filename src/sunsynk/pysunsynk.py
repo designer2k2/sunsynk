@@ -19,6 +19,19 @@ from sunsynk.sunsynk import Sunsynk
 _LOGGER = logging.getLogger(__name__)
 
 
+def _crc16(data: bytes) -> int:
+    """Calculate Modbus RTU CRC16."""
+    crc = 0xFFFF
+    for b in data:
+        crc ^= b
+        for _ in range(8):
+            if crc & 0x0001:
+                crc = (crc >> 1) ^ 0xA001
+            else:
+                crc >>= 1
+    return crc
+
+
 @attrs.define
 class PySunsynk(Sunsynk):
     """Sunsync Modbus class."""
@@ -63,11 +76,21 @@ class PySunsynk(Sunsynk):
 
             Some Deye/Virtus inverter firmware always responds with slave ID 0
             regardless of the configured Modbus SN, causing pymodbus to reject
-            the response. This patches the first byte of incoming frames.
+            the response. Only patches if the original CRC is valid, then
+            recalculates CRC over the patched frame.
             Note: sending=False means we are receiving data from the inverter.
             """
-            if not sending and len(data) > 0 and data[0] == 0:
-                data = bytes([server_id]) + data[1:]
+            if not sending and len(data) > 4 and data[0] == 0:
+                # Verify original CRC before patching
+                body = data[:-2]
+                orig_crc = (data[-2]) | (data[-1] << 8)
+                if _crc16(body) == orig_crc:
+                    # CRC valid - patch slave ID and recalculate CRC
+                    patched_body = bytes([server_id]) + body[1:]
+                    crc = _crc16(patched_body)
+                    data = patched_body + bytes([crc & 0xFF, (crc >> 8) & 0xFF])
+                else:
+                    _LOGGER.debug("Slave ID 0 response with invalid CRC, not patching")
             return data
 
         return AsyncModbusSerialClient(
