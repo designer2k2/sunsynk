@@ -140,10 +140,15 @@ class AInverter:
 
         _LOGGER.info("Protocol version: %s", self.inv.state[DEFS.protocol])
 
-        # Initial read for all sensors
+        # Initial read for all sensors — non-fatal if some registers unsupported
         sensors = list(SOPT)
         _LOGGER.info("Reading all sensors %s", ", ".join(s.name for s in sensors))
-        await self.read_sensors(sensors=sensors)
+        try:
+            await self.read_sensors(sensors=sensors)
+        except Exception as err:  # pylint:disable=broad-except
+            _LOGGER.warning(
+                "Initial sensor read completed with errors (unsupported registers?): %s", err
+            )
 
     @property
     def rated_power(self) -> float:
