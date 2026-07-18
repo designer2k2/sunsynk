@@ -5,6 +5,7 @@ import logging
 
 from ha_addon_sunsynk_multi.a_inverter import STATE
 from ha_addon_sunsynk_multi.a_sensor import MQTT
+from ha_addon_sunsynk_multi.charge_limit import build_charge_limit_callback
 from ha_addon_sunsynk_multi.driver import callback_discovery_info, init_driver
 from ha_addon_sunsynk_multi.errors import print_errors
 from ha_addon_sunsynk_multi.options import OPT, init_options
@@ -39,6 +40,9 @@ async def main_loop() -> None:
             await ist.hass_discover_sensors()
             ist.cb = build_callback_schedule(ist)
             CALLBACKS.append(ist.cb)
+            climit_cb = build_charge_limit_callback(ist)
+            if climit_cb:
+                CALLBACKS.append(climit_cb)
         except (ConnectionError, ValueError) as err:
             ist.log_bold(str(err))
             _LOGGER.critical(

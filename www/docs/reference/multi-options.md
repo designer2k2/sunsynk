@@ -117,6 +117,35 @@ The `SENSORS_FIRST_INVERTER` accepts a list of sensors that will only be applied
 
 Refer to [Schedules](./schedules)
 
+## Battery charge limit
+
+The `BATTERY_CHARGE_LIMIT_SOC` option stops battery charging once the SOC
+reaches the given percentage, by setting `Battery Max Charge current` to 0.
+Charging resumes automatically once the SOC drops back below the limit by
+more than 1% (a small hysteresis margin, to avoid rapidly toggling right at
+the boundary). Set to `0` (default) to disable this feature entirely.
+
+The `BATTERY_CHARGE_LIMIT_BALANCE_DAYS` option, combined with the above,
+suspends the charge limit every this many days so the battery gets a full
+charge to ~99-100% SOC, useful for BMS cell balancing. It has no effect
+unless `BATTERY_CHARGE_LIMIT_SOC` is also set. Set to `0` (default) to
+disable. The first balance charge only happens after the configured
+interval has passed since the feature was first enabled, not immediately.
+
+The addon needs to remember the charge current from just before it applied
+the limit, so it can be restored. This is persisted to disk and survives
+addon restarts - it only ever restores a value the addon itself remembered
+(never a guessed one), and it keeps retrying the restore on every cycle
+until it can confirm (by reading the sensor back) that it actually took
+effect, so a dropped Modbus write can't permanently strand the charge
+current at 0.
+
+::: tip
+If you disable `BATTERY_CHARGE_LIMIT_SOC` while charging is currently
+limited, the addon stops managing that register - you'll need to restore
+the charge current manually.
+:::
+
 ## Home Assistant Discovery options
 
 The per-inverter `HA_PREFIX` will be used for the Device (the Inverter) name and the prefix to all the entity Ids in Home Assistant

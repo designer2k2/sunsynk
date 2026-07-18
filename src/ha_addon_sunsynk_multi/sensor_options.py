@@ -19,6 +19,16 @@ _LOGGER = logging.getLogger(__name__)
 DEFS = SensorDefinitions()
 """Sensor definitions (1ph / 3ph)."""
 
+BATTERY_SOC_SENSOR_IDS = ("battery_soc", "battery_1_soc")
+BATTERY_MAX_CHARGE_SENSOR_ID = "battery_max_charge_current"
+
+
+def get_charge_limit_sensors() -> tuple[Sensor | None, Sensor | None]:
+    """Resolve the SOC and max-charge sensors used by the battery charge limit feature."""
+    soc = next((DEFS.all[i] for i in BATTERY_SOC_SENSOR_IDS if i in DEFS.all), None)
+    max_charge = DEFS.all.get(BATTERY_MAX_CHARGE_SENSOR_ID)
+    return soc, max_charge
+
 
 @attrs.define(slots=True)
 class SensorOption:
@@ -96,6 +106,17 @@ class SensorOptions(dict[Sensor, SensorOption]):
         while self._deps:
             sen = self._deps.pop()
             self._add_sensor(sen, first=True)
+
+        # 6. Force-track sensors needed for the battery charge limit feature.
+        # These are a per-inverter concern, so always clear `first` even if
+        # the sensor was already added via SENSORS_FIRST_INVERTER - otherwise
+        # it would never be read on inverters after the first.
+        if OPT.battery_charge_limit_soc:
+            for climit_sen in get_charge_limit_sensors():
+                if climit_sen is None:
+                    continue
+                self._add_sensor(climit_sen)
+                self[climit_sen].first = False
 
         # Display hidden sensors
         if hidden := [s.sensor.name for s in self.values() if not s.visible]:

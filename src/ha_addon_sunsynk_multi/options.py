@@ -65,6 +65,11 @@ class Options:
     sensors_first_inverter: list[str] = attrs.field(factory=list)
     read_allow_gap: int = 2
     read_sensors_batch_size: int = 20
+    battery_charge_limit_soc: int = 0
+    """Stop charging once SOC reaches this percentage. 0 disables the feature."""
+    battery_charge_limit_balance_days: int = 0
+    """Every N days, suspend the charge limit for a full charge to 100% (cell
+    balancing). 0 disables. Only takes effect if battery_charge_limit_soc is set."""
     schedules: list[Schedule] = attrs.field(factory=list)
     timeout: int = 10
     debug: int = 0
