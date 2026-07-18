@@ -177,7 +177,9 @@ async def test_confirm_clear_skipped_while_write_pending(ist: AInverter) -> None
     assert state["prev_charge_current"] == 60  # not cleared
 
 
-async def test_balance_confirm_clear_skipped_while_write_pending(ist: AInverter) -> None:
+async def test_balance_confirm_clear_skipped_while_write_pending(
+    ist: AInverter,
+) -> None:
     """Same guard as above, for the balance-charge unlock confirm path."""
     OPT.battery_charge_limit_soc = 80
     OPT.battery_charge_limit_balance_days = 30
@@ -451,7 +453,10 @@ def test_first_load_seeds_last_balance_today(
     state = charge_limit._load_state("ss1")
     assert state["last_balance"] == date.today()
     # and it's persisted, not just returned in memory
-    assert charge_limit._load_all_state()["ss1"]["last_balance"] == date.today().isoformat()
+    assert (
+        charge_limit._load_all_state()["ss1"]["last_balance"]
+        == date.today().isoformat()
+    )
 
 
 def test_load_all_state_handles_corrupt_file(
