@@ -109,9 +109,7 @@ def test_charge_limit_sensors_force_added() -> None:
 
 
 def test_charge_limit_sensors_first_flag_cleared() -> None:
-    """A sensor listed under SENSORS_FIRST_INVERTER must still be read on
-    every inverter once the charge limit needs it (or it'd never be
-    scheduled for inverters after the first)."""
+    """A sensor listed under SENSORS_FIRST_INVERTER must still be read on every inverter once the charge limit needs it (or it'd never be scheduled for inverters after the first)."""
     OPT.sensors = []
     OPT.sensors_first_inverter = ["battery_soc"]
     OPT.battery_charge_limit_soc = 80

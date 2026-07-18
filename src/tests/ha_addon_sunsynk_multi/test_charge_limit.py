@@ -12,7 +12,10 @@ from ha_addon_sunsynk_multi import charge_limit
 from ha_addon_sunsynk_multi.a_inverter import AInverter
 from ha_addon_sunsynk_multi.charge_limit import build_charge_limit_callback
 from ha_addon_sunsynk_multi.options import OPT
-from ha_addon_sunsynk_multi.sensor_options import get_charge_limit_sensors, import_definitions
+from ha_addon_sunsynk_multi.sensor_options import (
+    get_charge_limit_sensors,
+    import_definitions,
+)
 
 
 @pytest.fixture(autouse=True)
@@ -89,8 +92,7 @@ async def test_limit_stops_charging_at_soc(ist: AInverter) -> None:
 
 
 async def test_limit_resumes_after_restart(ist: AInverter) -> None:
-    """A restored prev_charge_current (simulating a restart while limited) is used,
-    and only cleared once a later tick confirms the write actually landed."""
+    """A restored prev_charge_current (simulating a restart while limited) is used, and only cleared once a later tick confirms the write actually landed."""
     OPT.battery_charge_limit_soc = 80
     OPT.battery_charge_limit_balance_days = 0
     soc_sensor, max_charge_sensor = get_charge_limit_sensors()
@@ -153,9 +155,7 @@ async def test_limit_resume_retried_until_confirmed(ist: AInverter) -> None:
 
 
 async def test_confirm_clear_skipped_while_write_pending(ist: AInverter) -> None:
-    """A stale nonzero read must not clear `prev` while a write for that same
-    sensor is still sitting in write_queue, unflushed - otherwise a stop-write
-    queued this tick could be "confirmed away" before it's even applied."""
+    """A stale nonzero read must not clear `prev` while a write for that same sensor is still sitting in write_queue, unflushed - otherwise a stop-write queued this tick could be "confirmed away" before it's even applied."""
     OPT.battery_charge_limit_soc = 80
     OPT.battery_charge_limit_balance_days = 0
     soc_sensor, max_charge_sensor = get_charge_limit_sensors()
@@ -298,8 +298,7 @@ async def test_noop_when_sensors_not_read_yet(ist: AInverter) -> None:
 
 
 async def test_balance_charge_unlocks_limited_inverter(ist: AInverter) -> None:
-    """Due for a balance charge: restore a known previous value even if SOC < limit,
-    keeping it persisted until a later tick confirms the write landed."""
+    """Due for a balance charge: restore a known previous value even if SOC < limit, keeping it persisted until a later tick confirms the write landed."""
     OPT.battery_charge_limit_soc = 80
     OPT.battery_charge_limit_balance_days = 30
     soc_sensor, max_charge_sensor = get_charge_limit_sensors()
@@ -435,8 +434,7 @@ async def test_balance_days_old_enough_is_due(ist: AInverter) -> None:
 def test_load_all_state_handles_missing_file(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Missing state file loads as empty, and a never-seen inverter is seeded
-    as "just balanced today" (see test_first_load_seeds_last_balance_today)."""
+    """Missing state file loads as empty, and a never-seen inverter is seeded as "just balanced today" (see test_first_load_seeds_last_balance_today)."""
     monkeypatch.setattr(charge_limit, "get_root", lambda create=False: tmp_path)
     assert charge_limit._load_all_state() == {}
     assert charge_limit._load_state("ss1") == {
@@ -448,9 +446,7 @@ def test_load_all_state_handles_missing_file(
 def test_first_load_seeds_last_balance_today(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """A brand-new inverter must not trigger an immediate balance charge just
-    because BATTERY_CHARGE_LIMIT_BALANCE_DAYS was enabled from day one - the
-    first balance charge should only happen after the configured interval."""
+    """A brand-new inverter must not trigger an immediate balance charge just because BATTERY_CHARGE_LIMIT_BALANCE_DAYS was enabled from day one - the first balance charge should only happen after the configured interval."""
     monkeypatch.setattr(charge_limit, "get_root", lambda create=False: tmp_path)
     state = charge_limit._load_state("ss1")
     assert state["last_balance"] == date.today()
