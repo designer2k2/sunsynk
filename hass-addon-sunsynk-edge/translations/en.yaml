@@ -28,3 +28,21 @@ configuration:
       Set the program time interval in minutes for the selection list.
 
       Warning: setting this to 5 minutes will result in a very long list to scroll through."
+
+  BATTERY_CHARGE_LIMIT_SOC:
+    name: Battery charge limit SOC
+    description: "
+      Stop charging the battery once it reaches this SOC percentage, and resume
+      charging once it drops back below it. Set to 0 to disable (default).
+
+      This survives addon restarts. If you disable this option while charging
+      is currently stopped, you may need to restore the charge current
+      manually - the addon stops managing it."
+
+  BATTERY_CHARGE_LIMIT_BALANCE_DAYS:
+    name: Battery charge limit balance days
+    description: "
+      Every this many days, suspend BATTERY_CHARGE_LIMIT_SOC and let the
+      battery charge fully to 100%, for BMS cell balancing. Set to 0 to
+      disable (default). Only takes effect when BATTERY_CHARGE_LIMIT_SOC is
+      set."
