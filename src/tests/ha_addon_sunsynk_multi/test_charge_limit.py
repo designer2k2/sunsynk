@@ -1,5 +1,8 @@
 """Test the battery charge limit feature."""
 
+# pylint: disable=protected-access
+# Tests need to inspect/seed the persisted state directly.
+
 import logging
 from collections.abc import Iterator
 from datetime import date, timedelta
@@ -80,7 +83,7 @@ async def test_limit_stops_charging_at_soc(ist: AInverter) -> None:
 
     ist.write_queue = {}
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {soc_sensor: 85, max_charge_sensor: 60}.get(s)
+        side_effect={soc_sensor: 85, max_charge_sensor: 60}.get
     )
     cb = build_charge_limit_callback(ist)
     assert cb is not None
@@ -104,7 +107,7 @@ async def test_limit_resumes_after_restart(ist: AInverter) -> None:
 
     ist.write_queue = {}
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {soc_sensor: 70, max_charge_sensor: 0}.get(s)
+        side_effect={soc_sensor: 70, max_charge_sensor: 0}.get
     )
     cb = build_charge_limit_callback(ist)
     assert cb is not None
@@ -119,7 +122,7 @@ async def test_limit_resumes_after_restart(ist: AInverter) -> None:
     # Next tick: the write landed, max_charge now reads back as restored.
     ist.write_queue = {}
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {soc_sensor: 70, max_charge_sensor: 60}.get(s)
+        side_effect={soc_sensor: 70, max_charge_sensor: 60}.get
     )
     await cb.callback(5)
 
@@ -140,7 +143,7 @@ async def test_limit_resume_retried_until_confirmed(ist: AInverter) -> None:
     )
 
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {soc_sensor: 70, max_charge_sensor: 0}.get(s)
+        side_effect={soc_sensor: 70, max_charge_sensor: 0}.get
     )
     cb = build_charge_limit_callback(ist)
     assert cb is not None
@@ -167,7 +170,7 @@ async def test_confirm_clear_skipped_while_write_pending(ist: AInverter) -> None
 
     ist.write_queue = {max_charge_sensor: 0}  # a write is already in flight
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {soc_sensor: 50, max_charge_sensor: 60}.get(s)
+        side_effect={soc_sensor: 50, max_charge_sensor: 60}.get
     )
     cb = build_charge_limit_callback(ist)
     assert cb is not None
@@ -192,7 +195,7 @@ async def test_balance_confirm_clear_skipped_while_write_pending(
 
     ist.write_queue = {max_charge_sensor: 0}
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {soc_sensor: 85, max_charge_sensor: 60}.get(s)
+        side_effect={soc_sensor: 85, max_charge_sensor: 60}.get
     )
     cb = build_charge_limit_callback(ist)
     assert cb is not None
@@ -216,7 +219,7 @@ async def test_unknown_prev_warning_rate_limited(
     )
 
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {soc_sensor: 50, max_charge_sensor: 0}.get(s)
+        side_effect={soc_sensor: 50, max_charge_sensor: 0}.get
     )
     cb = build_charge_limit_callback(ist)
     assert cb is not None
@@ -256,7 +259,7 @@ async def test_hysteresis_dead_zone_no_resume(ist: AInverter) -> None:
     # limit=80, RESUME_HYSTERESIS_SOC=2 -> resume only at soc<=78. SOC=79 is
     # below the limit but still inside the dead zone: must not resume yet.
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {soc_sensor: 79, max_charge_sensor: 0}.get(s)
+        side_effect={soc_sensor: 79, max_charge_sensor: 0}.get
     )
     cb = build_charge_limit_callback(ist)
     assert cb is not None
@@ -276,7 +279,7 @@ async def test_no_restore_without_known_previous(ist: AInverter) -> None:
 
     ist.write_queue = {}
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {soc_sensor: 50, max_charge_sensor: 0}.get(s)
+        side_effect={soc_sensor: 50, max_charge_sensor: 0}.get
     )
     cb = build_charge_limit_callback(ist)
     assert cb is not None
@@ -312,7 +315,7 @@ async def test_balance_charge_unlocks_limited_inverter(ist: AInverter) -> None:
 
     ist.write_queue = {}
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {soc_sensor: 85, max_charge_sensor: 0}.get(s)
+        side_effect={soc_sensor: 85, max_charge_sensor: 0}.get
     )
     cb = build_charge_limit_callback(ist)
     assert cb is not None
@@ -326,7 +329,7 @@ async def test_balance_charge_unlocks_limited_inverter(ist: AInverter) -> None:
     # Next tick: the write landed.
     ist.write_queue = {}
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {soc_sensor: 85, max_charge_sensor: 60}.get(s)
+        side_effect={soc_sensor: 85, max_charge_sensor: 60}.get
     )
     await cb.callback(5)
 
@@ -348,10 +351,10 @@ async def test_balance_charge_completes_at_target(ist: AInverter) -> None:
 
     ist.write_queue = {}
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {
+        side_effect={
             soc_sensor: charge_limit.BALANCE_TARGET_SOC,
             max_charge_sensor: 60,
-        }.get(s)
+        }.get
     )
     cb = build_charge_limit_callback(ist)
     assert cb is not None
@@ -375,7 +378,7 @@ async def test_balance_not_due_uses_normal_limit(ist: AInverter) -> None:
 
     ist.write_queue = {}
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {soc_sensor: 85, max_charge_sensor: 60}.get(s)
+        side_effect={soc_sensor: 85, max_charge_sensor: 60}.get
     )
     cb = build_charge_limit_callback(ist)
     assert cb is not None
@@ -399,7 +402,7 @@ async def test_balance_due_without_known_previous_warns(
 
     ist.write_queue = {}
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {soc_sensor: 50, max_charge_sensor: 0}.get(s)
+        side_effect={soc_sensor: 50, max_charge_sensor: 0}.get
     )
     cb = build_charge_limit_callback(ist)
     assert cb is not None
@@ -424,7 +427,7 @@ async def test_balance_days_old_enough_is_due(ist: AInverter) -> None:
 
     ist.write_queue = {}
     ist.get_state = Mock(  # type: ignore[misc]
-        side_effect=lambda s: {soc_sensor: 85, max_charge_sensor: 0}.get(s)
+        side_effect={soc_sensor: 85, max_charge_sensor: 0}.get
     )
     cb = build_charge_limit_callback(ist)
     assert cb is not None
@@ -438,7 +441,7 @@ def test_load_all_state_handles_missing_file(
 ) -> None:
     """Missing state file loads as empty, and a never-seen inverter is seeded as "just balanced today" (see test_first_load_seeds_last_balance_today)."""
     monkeypatch.setattr(charge_limit, "get_root", lambda create=False: tmp_path)
-    assert charge_limit._load_all_state() == {}
+    assert not charge_limit._load_all_state()
     assert charge_limit._load_state("ss1") == {
         "prev_charge_current": None,
         "last_balance": date.today(),
@@ -465,4 +468,4 @@ def test_load_all_state_handles_corrupt_file(
     """Corrupt state file loads as empty, no crash."""
     monkeypatch.setattr(charge_limit, "get_root", lambda create=False: tmp_path)
     (tmp_path / charge_limit.STATE_FILE).write_text("not json", encoding="utf-8")
-    assert charge_limit._load_all_state() == {}
+    assert not charge_limit._load_all_state()
